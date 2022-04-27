@@ -28,7 +28,7 @@ class Form extends React.Component {
 
     this.setState({ isLoading: true });
     
-    fetch ('http://api.horseapi.com/tracks', { 
+    fetch ('https://api.horseapi.com/tracks', { 
         headers: {
           method: 'GET',
           accept: 'application/json',
