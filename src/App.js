@@ -28,7 +28,8 @@ class Form extends React.Component {
     this.setState({selectedTrack: e.target.value});
     const selectedTrackData = this.state.tracks.filter(track => track.id===e.target.value);
     this.setState( {
-      raceCount: selectedTrackData[0].raceCount
+      raceCount: selectedTrackData[0].raceCount,
+      selectedRace: '1'
     });
   }
 
@@ -52,6 +53,8 @@ class Form extends React.Component {
       .then(data => this.setState( {
         tracks: data,
         isLoading: false,
+        selectedTrack: data[0].id,
+        selectedRace: '1',
         raceCount: data[0].raceCount
       }));
 
@@ -77,7 +80,7 @@ class Form extends React.Component {
               )}
           </select>
           <label for="raceNum"> Select race #: </label>
-          <select id="raceNum" name="raceNum" onChange={this.handleRaceNumSelect}>
+          <select id="raceNum" name="raceNum" value={this.state.selectedRace} onChange={this.handleRaceNumSelect}>
             {races.map(race => race)}
           </select>
       </div>
