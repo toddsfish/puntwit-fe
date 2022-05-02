@@ -15,12 +15,25 @@ class Form extends React.Component {
     super(props);
     this.state = {
       tracks: [],
+      raceCount: "",
+      selectedTrack: "",
+      selectedRace: "",
       isLoading: false,
     }
+    this.handleTrackSelect = this.handleTrackSelect.bind(this);
+    this.handleRaceNumSelect = this.handleRaceNumSelect.bind(this);
   }
 
-  handleSelect() {
+  handleTrackSelect(e) {
+    this.setState({selectedTrack: e.target.value});
+    const selectedTrackData = this.state.tracks.filter(track => track.id===e.target.value);
+    this.setState( {
+      raceCount: selectedTrackData[0].raceCount
+    });
+  }
 
+  handleRaceNumSelect(e) {
+    this.setState({selectedRace: e.target.value});
   }
 
   componentDidMount() {
@@ -38,37 +51,34 @@ class Form extends React.Component {
       .then(response => response.json())
       .then(data => this.setState( {
         tracks: data,
-        isLoading: false
+        isLoading: false,
+        raceCount: data[0].raceCount
       }));
 
   }
   // need to read up on my === vs ==? promises, map function, in general ES6 post saved to pocket
   render () {
     //const { tracks, isLoading} = this.state; - need to review using this syntax
-
     if (this.state.isLoading) {
       return <p>Loading...</p>
     }
+
+    let races = [];
+    for (let i = 1; i <= this.state.raceCount; i++) {
+      races.push(<option value={i}>{i}</option>);
+    }
+
     return (
       <div>
           <label for="tracks">Select track: </label>
-            <select id="tracks" name="tracks">
+            <select id="tracks" name="tracks" onChange={this.handleTrackSelect}>
             {this.state.tracks.map(track =>
               <option value={track.id}>{track.name}</option>
               )}
           </select>
           <label for="raceNum"> Select race #: </label>
-          <select id="raceNum" name="raceNum">
-          {this.state.tracks.map((track,index)=>{
-            if (index === 0) {
-              let races = [];
-              for (let i = 1; i <= track.raceCount; i++) {
-                races.push(<option value={i}>{i}</option>);
-              }
-              return races
-          }
-          return null
-          })}
+          <select id="raceNum" name="raceNum" onChange={this.handleRaceNumSelect}>
+            {races.map(race => race)}
           </select>
       </div>
     );
