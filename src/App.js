@@ -5,7 +5,7 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-        <Form />
+      <Form />
     </div>
   );
 }
@@ -85,13 +85,29 @@ class Form extends React.Component {
             {races.map(race => race)}
           </select>
         <div>
-          {/* <Horses /> component */}
-          {/*<Tweets /> component */}
-          {/*<Results /> component */}
+          <Horses isLoading={this.state.isLoading}/>
+          {/* <Tweets /> component */}
+          {/* <Results /> component */}
         </div>
       </div>
 
     );
+  }
+}
+
+class Horses extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: false,
+    }
+    
+  }
+
+  render () {
+    return (
+      <h2>Horses:</h2>
+    )
   }
 }
 
