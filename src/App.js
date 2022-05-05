@@ -50,6 +50,7 @@ class Form extends React.Component {
         },
       })
       .then(response => response.json())
+      // set initial states for track and race selection
       .then(data => this.setState( {
         tracks: data,
         isLoading: false,
@@ -83,7 +84,13 @@ class Form extends React.Component {
           <select id="raceNum" name="raceNum" value={this.state.selectedRace} onChange={this.handleRaceNumSelect}>
             {races.map(race => race)}
           </select>
+        <div>
+          {/* <Horses /> component */}
+          {/*<Tweets /> component */}
+          {/*<Results /> component */}
+        </div>
       </div>
+
     );
   }
 }
