@@ -42,7 +42,7 @@ class Form extends React.Component {
 
     this.setState({ isLoading: true });
     
-    fetch ('https://api.horseapi.com/tracks', { 
+    fetch ('https://cors-anywhere.herokuapp.com/https://api.horseapi.com/tracks', { 
         headers: {
           method: 'GET',
           accept: 'application/json',
@@ -85,7 +85,7 @@ class Form extends React.Component {
             {races.map(race => race)}
           </select>
         <div>
-          <Horses isLoading={this.state.isLoading}/>
+          <Race selectedTrack={this.state.selectedTrack} selectedRace={this.state.selectedRace}/>
           {/* <Tweets /> component */}
           {/* <Results /> component */}
         </div>
@@ -95,16 +95,45 @@ class Form extends React.Component {
   }
 }
 
-class Horses extends React.Component {
+class Race extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       isLoading: false,
+      race: []
     }
-    
+  }
+
+  componentDidMount() {
+    this.setState({ isLoading: true });
+  }
+
+  componentDidUpdate(prevProps) {
+
+    if (this.props.selectedTrack !== prevProps.selectedTrack || this.props.selectedRace !== prevProps.selectedRace) {
+      fetch ('https://cors-anywhere.herokuapp.com/https://api.horseapi.com/races/' + this.props.selectedTrack + '/' + this.props.selectedRace, { 
+          headers: {
+            method: 'GET',
+            accept: 'application/json',
+            Authorization: process.env.REACT_APP_ENV_HORSEAPI_KEY
+          },
+        })
+        .then(response => response.json())
+        // set initial states for track and race selection
+        .then(data => this.setState( {
+          isLoading: false,
+          race: data
+        }));
+    }
+
   }
 
   render () {
+
+    if (this.state.isLoading) {
+      return null
+    }
+
     return (
       <h2>Horses:</h2>
     )
