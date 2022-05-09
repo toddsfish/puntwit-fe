@@ -42,7 +42,7 @@ class Form extends React.Component {
 
     this.setState({ isLoading: true });
     
-    fetch ('https://cors-anywhere.herokuapp.com/https://api.horseapi.com/tracks', { 
+    fetch ('https://api.horseapi.com/tracks', { 
         headers: {
           method: 'GET',
           accept: 'application/json',
@@ -50,7 +50,6 @@ class Form extends React.Component {
         },
       })
       .then(response => response.json())
-      // set initial states for track and race selection
       .then(data => this.setState( {
         tracks: data,
         isLoading: false,
@@ -72,6 +71,12 @@ class Form extends React.Component {
       races.push(<option value={i}>{i}</option>);
     }
 
+    /* Potentially filter out all but au tracks?
+    let auTracks = this.state.tracks.filter(track => {
+      
+    });
+    */
+
     return (
       <div>
           <label for="tracks">Select track: </label>
@@ -86,8 +91,10 @@ class Form extends React.Component {
           </select>
         <div>
           <Race selectedTrack={this.state.selectedTrack} selectedRace={this.state.selectedRace}/>
-          {/* <Tweets /> component */}
           {/* <Results /> component */}
+        </div>
+        <div>
+          <Tweets/>
         </div>
       </div>
 
@@ -100,7 +107,7 @@ class Race extends React.Component {
     super(props);
     this.state = {
       isLoading: false,
-      race: []
+      horses: [],
     }
   }
 
@@ -111,7 +118,7 @@ class Race extends React.Component {
   componentDidUpdate(prevProps) {
 
     if (this.props.selectedTrack !== prevProps.selectedTrack || this.props.selectedRace !== prevProps.selectedRace) {
-      fetch ('https://cors-anywhere.herokuapp.com/https://api.horseapi.com/races/' + this.props.selectedTrack + '/' + this.props.selectedRace, { 
+      fetch ('https://api.horseapi.com/races/' + this.props.selectedTrack + '/' + this.props.selectedRace, { 
           headers: {
             method: 'GET',
             accept: 'application/json',
@@ -119,10 +126,10 @@ class Race extends React.Component {
           },
         })
         .then(response => response.json())
-        // set initial states for track and race selection
         .then(data => this.setState( {
           isLoading: false,
-          race: data
+          horses: data.runners,
+          results: data.results
         }));
     }
 
@@ -135,9 +142,41 @@ class Race extends React.Component {
     }
 
     return (
-      <h2>Horses:</h2>
+      <div>
+        <ul>
+          {this.state.horses.map(horse => {
+            return <li>{horse.number} - {horse.name} - Jockey: {horse.jockey} / Trainer: {horse.trainer}</li>
+          }
+          )}
+        </ul>
+      </div>
     )
   }
+}
+
+class Tweets extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: false,
+      tweets: []
+    }
+  }
+
+  componentDidMount() {
+    this.setState({ isLoading: true });
+  }
+
+  render () {
+
+    if (this.state.isLoading) {
+      return null
+    }
+
+    return (
+      <h2>Tweets:</h2>
+    )
+  } 
 }
 
 export default App;
