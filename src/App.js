@@ -71,11 +71,10 @@ class Form extends React.Component {
       races.push(<option value={i}>{i}</option>);
     }
 
-    /* Potentially filter out all but au tracks?
+    /*
     let auTracks = this.state.tracks.filter(track => {
-      
-    });
-    */
+      return track.id.includes("AU")
+    });*/
 
     return (
       <div>
