@@ -16,8 +16,9 @@ class Form extends React.Component {
     this.state = {
       tracks: [],
       raceCount: "",
-      selectedTrack: "",
+      selectedTrackId: "",
       selectedRace: "",
+      selectedTrackName: "",
       isLoading: false,
     }
     this.handleTrackSelect = this.handleTrackSelect.bind(this);
@@ -25,12 +26,15 @@ class Form extends React.Component {
   }
 
   handleTrackSelect(e) {
-    this.setState({selectedTrack: e.target.value});
+    this.setState({selectedTrackId: e.target.value});
     const selectedTrackData = this.state.tracks.filter(track => track.id===e.target.value);
     this.setState( {
       raceCount: selectedTrackData[0].raceCount,
       selectedRace: '1'
     });
+    this.setState({
+      selectedTrackName: selectedTrackData[0].name.replace(/(\w*\b)+(\s)([-])(\s)/ig,'')
+    })
   }
 
   handleRaceNumSelect(e) {
@@ -51,13 +55,9 @@ class Form extends React.Component {
       })
       .then(response => response.json())
       .then(data => this.setState( {
-        tracks: data,
+        tracks: data.filter(tracks => tracks.id.includes("AU")),
         isLoading: false,
-        selectedTrack: data[0].id,
-        selectedRace: '1',
-        raceCount: data[0].raceCount
       }));
-
   }
   // need to read up on my === vs ==? promises, map function, in general ES6 post saved to pocket
   render () {
@@ -71,17 +71,14 @@ class Form extends React.Component {
       races.push(<option value={i}>{i}</option>);
     }
 
-    /*
-    let auTracks = this.state.tracks.filter(track => {
-      return track.id.includes("AU")
-    });*/
+    
 
     return (
       <div>
           <label for="tracks">Select track: </label>
             <select id="tracks" name="tracks" onChange={this.handleTrackSelect}>
             {this.state.tracks.map(track =>
-              <option value={track.id}>{track.name}</option>
+              <option value={track.id}>{track.name.replace(/(\w*\b)+(\s)([-])(\s)/ig,'')}</option>
               )}
           </select>
           <label for="raceNum"> Select race #: </label>
@@ -89,11 +86,11 @@ class Form extends React.Component {
             {races.map(race => race)}
           </select>
         <div>
-          <Race selectedTrack={this.state.selectedTrack} selectedRace={this.state.selectedRace}/>
+          <Race selectedTrackId={this.state.selectedTrackId} selectedRace={this.state.selectedRace}/>
           {/* <Results /> component */}
         </div>
         <div>
-          <Tweets/>
+          <Tweets selectedTrackName={this.state.selectedTrackName} selectedRace={this.state.selectedRace}/>
         </div>
       </div>
 
@@ -116,8 +113,8 @@ class Race extends React.Component {
 
   componentDidUpdate(prevProps) {
 
-    if (this.props.selectedTrack !== prevProps.selectedTrack || this.props.selectedRace !== prevProps.selectedRace) {
-      fetch ('https://api.horseapi.com/races/' + this.props.selectedTrack + '/' + this.props.selectedRace, { 
+    if (this.props.selectedTrackId !== prevProps.selectedTrackId || this.props.selectedRace !== prevProps.selectedRace) {
+      fetch ('https://api.horseapi.com/races/' + this.props.selectedTrackId + '/' + this.props.selectedRace, { 
           headers: {
             method: 'GET',
             accept: 'application/json',
@@ -164,6 +161,25 @@ class Tweets extends React.Component {
 
   componentDidMount() {
     this.setState({ isLoading: true });
+  }
+
+  componentDidUpdate(prevProps) {
+    //https://s9iwqktpp8.execute-api.ap-southeast-2.amazonaws.com/searchtweets?track=<track name>&race=<race number>
+
+    if (this.props.selectedTrackName !== prevProps.selectedTrackName || this.props.selectedRace !== prevProps.selectedRace) {
+      fetch ('https://s9iwqktpp8.execute-api.ap-southeast-2.amazonaws.com/searchtweets?track=' + this.props.selectedTrackName + '&race=' + this.props.selectedRace, { 
+          headers: {
+            method: 'GET',
+            accept: 'application/json',
+          },
+        })
+        .then(response => response.json())
+        .then(data => this.setState( {
+          isLoading: false,
+          tweets: data
+        }));
+    }
+
   }
 
   render () {
