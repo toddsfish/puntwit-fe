@@ -46,7 +46,7 @@ class Form extends React.Component {
 
     this.setState({ isLoading: true });
     
-    fetch ('https://api.horseapi.com/tracks', { 
+    fetch ('https://cors-anywhere.herokuapp.com/api.horseapi.com/tracks', { 
         headers: {
           method: 'GET',
           accept: 'application/json',
@@ -114,7 +114,7 @@ class Race extends React.Component {
   componentDidUpdate(prevProps) {
 
     if (this.props.selectedTrackId !== prevProps.selectedTrackId || this.props.selectedRace !== prevProps.selectedRace) {
-      fetch ('https://api.horseapi.com/races/' + this.props.selectedTrackId + '/' + this.props.selectedRace, { 
+      fetch ('https://cors-anywhere.herokuapp.com/api.horseapi.com/races/' + this.props.selectedTrackId + '/' + this.props.selectedRace, { 
           headers: {
             method: 'GET',
             accept: 'application/json',
