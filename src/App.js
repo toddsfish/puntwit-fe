@@ -167,7 +167,7 @@ class Tweets extends React.Component {
     //https://s9iwqktpp8.execute-api.ap-southeast-2.amazonaws.com/searchtweets?track=<track name>&race=<race number>
 
     if (this.props.selectedTrackName !== prevProps.selectedTrackName || this.props.selectedRace !== prevProps.selectedRace) {
-      fetch ('https://s9iwqktpp8.execute-api.ap-southeast-2.amazonaws.com/searchtweets?track=' + this.props.selectedTrackName + '&race=' + this.props.selectedRace, { 
+      fetch ('https://cors-anywhere.herokuapp.com/s9iwqktpp8.execute-api.ap-southeast-2.amazonaws.com/searchtweets?track=' + this.props.selectedTrackName + '&race=' + this.props.selectedRace, { 
           headers: {
             method: 'GET',
             accept: 'application/json',
