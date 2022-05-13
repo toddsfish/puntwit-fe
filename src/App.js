@@ -49,6 +49,7 @@ class Form extends React.Component {
     fetch ('https://cors-anywhere.herokuapp.com/api.horseapi.com/tracks', { 
         headers: {
           method: 'GET',
+          mode: 'cors',
           accept: 'application/json',
           Authorization: process.env.REACT_APP_ENV_HORSEAPI_KEY
         },
