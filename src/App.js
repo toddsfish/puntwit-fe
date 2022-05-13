@@ -49,6 +49,7 @@ class Form extends React.Component {
     fetch ('https://cors-anywhere.herokuapp.com/api.horseapi.com/tracks', { 
         headers: {
           method: 'GET',
+          mode: 'cors',
           accept: 'application/json',
           Authorization: process.env.REACT_APP_ENV_HORSEAPI_KEY
         },
@@ -139,6 +140,7 @@ class Race extends React.Component {
 
     return (
       <div>
+        <h2>Horses:</h2>
         <ul>
           {this.state.horses.map(horse => {
             return <li>{horse.number} - {horse.name} - Jockey: {horse.jockey} / Trainer: {horse.trainer}</li>
@@ -155,7 +157,8 @@ class Tweets extends React.Component {
     super(props);
     this.state = {
       isLoading: false,
-      tweets: []
+      tweets: [],
+      tweetsMeta: {}
     }
   }
 
@@ -167,7 +170,7 @@ class Tweets extends React.Component {
     //https://s9iwqktpp8.execute-api.ap-southeast-2.amazonaws.com/searchtweets?track=<track name>&race=<race number>
 
     if (this.props.selectedTrackName !== prevProps.selectedTrackName || this.props.selectedRace !== prevProps.selectedRace) {
-      fetch ('https://cors-anywhere.herokuapp.com/s9iwqktpp8.execute-api.ap-southeast-2.amazonaws.com/searchtweets?track=' + this.props.selectedTrackName + '&race=' + this.props.selectedRace, { 
+      fetch ('https://s9iwqktpp8.execute-api.ap-southeast-2.amazonaws.com/searchtweets?track=' + this.props.selectedTrackName + '&race=' + this.props.selectedRace, { 
           headers: {
             method: 'GET',
             accept: 'application/json',
@@ -176,7 +179,8 @@ class Tweets extends React.Component {
         .then(response => response.json())
         .then(data => this.setState( {
           isLoading: false,
-          tweets: data
+          tweets: data.data,
+          tweetsMeta: data.meta
         }));
     }
 
@@ -188,8 +192,17 @@ class Tweets extends React.Component {
       return null
     }
 
+    if (this.state.tweetsMeta.result_count === 0) {
+      return null
+    }
+
     return (
-      <h2>Tweets:</h2>
+      <div>
+        <h2>Tweets:</h2>
+        <ul>
+        {this.state.tweets.map(tweet => <li>{tweet.text}</li>)}
+        </ul>
+      </div>
     )
   } 
 }
